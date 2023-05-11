@@ -1,5 +1,6 @@
 package dev.melkor.ch2;
 
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ public class HomeController {
         this.videoService = videoService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("videos", videoService.getVideos());
         return "index";
@@ -29,8 +30,29 @@ public class HomeController {
     }
 
     @PostMapping("/new-video")
-    public String newVideo(@ModelAttribute Video newVideo) {
+    public String newVideo(@ModelAttribute NewVideo newVideo) {
         videoService.create(newVideo);
         return "redirect:/";
+    }
+
+    @PostMapping("/multi-field-search")
+    public String multiFieldSearch(
+            @ModelAttribute VideoSearch search,
+            Model model
+    ) {
+        List<VideoEntity> searchResults =
+                videoService.search(search);
+        model.addAttribute("videos", searchResults);
+        return "index";
+    }
+
+    @PostMapping("/universal-search")
+    public String universalSearch(
+            @ModelAttribute UniversalSearch search, Model model
+    ) {
+        List<VideoEntity> searchResults =
+                videoService.search(search);
+        model.addAttribute("videos", searchResults);
+        return "index";
     }
 }
